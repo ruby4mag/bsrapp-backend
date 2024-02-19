@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bsr-backend-deployment
+spec:
+  selector:
+    matchLabels:
+      app: bsrapp-backend
+  replicas: 3 # tells deployment to run 3 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: bsrapp-backend
+    spec:
+      containers:
+      - name: bsrapp-backend
+        image: magingeorge/backend:JENKINS_BUILD_NUMBER
+        imagePullPolicy: Always
+        envFrom:
+        - secretRef:
+            name: env
+        ports:
+        - containerPort: 8000
