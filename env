@@ -1,0 +1,15 @@
+PORT=8000
+NODE_ENV=development
+MONGODB_URI=mongodb://144.126.253.165:32017/yt?authSource=admin
+JWT_SECRET=abc123def456
+SESSION_SECRET=abc123def456
+CLIENT_URL=https://react.bsrsport.org
+GOOGLE_CLIENT_ID=382733713179-hfjkror6pjepg0nsekg473j4ntpfstqd.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=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
+SERVER_URL=https://api.bsrsport.org
+STRIPE_SECRET_KEY=your-stripe-secret-key
+EMAIL_HOST=sandbox.smtp.mailtrap.io
+EMAIL_PORT=587
+EMAIL_USERNAME=your-email-username
+EMAIL_PASSWORD=your-email-password
+CONN_URL=amqp://144.126.253.165:32672
