@@ -84,7 +84,7 @@ router.get("/google/callback", (req, res, next) => {
         })
       )
 
-      res.redirect("https://react.bsrsport.org")
+      res.redirect(process.env.CLIENT_URL)
 
     });
   })(req, res, next);
