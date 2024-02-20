@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: bsrapp-backend
-  replicas: 3 # tells deployment to run 3 pods matching the template
+  replicas: 2 # tells deployment to run 3 pods matching the template
   template:
     metadata:
       labels:
