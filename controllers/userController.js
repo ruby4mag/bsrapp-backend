@@ -76,7 +76,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     sameSite: 'lax', // lax is important, don't use 'strict' or 'none'
     httpOnly: true, // must be true in production
     path: '/',
-    domain: process.env.ENVIRONMENT === 'development' ? '' : `.bsrsport.org`, // the period before is important and intentional
+    domain: process.env.COOKIE_DOMAIN, // the period before is important and intentional
 
 
   })
@@ -84,7 +84,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     sameSite: 'lax', // lax is important, don't use 'strict' or 'none'
     httpOnly: true, // must be true in production
     path: '/',
-    domain: process.env.ENVIRONMENT === 'development' ? '' : `.bsrsport.org`, // the period before is important and intentional
+    domain: process.env.COOKIE_DOMAIN, // the period before is important and intentional
 
   })
   res.status(200).json({

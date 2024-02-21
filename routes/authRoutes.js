@@ -80,7 +80,7 @@ router.get("/google/callback", (req, res, next) => {
           path: '/',
           //secure: process.env.ENVIRONMENT !== 'development', // must be true in production
           //maxAge: 60 * 60 * 24 * 7 * 52, // 1 year
-          domain: process.env.ENVIRONMENT === 'development' ? '' : `.bsrsport.org`, // the period before is important and intentional
+          domain: process.env.COOKIE_DOMAIN, // the period before is important and intentional
         })
       )
 
