@@ -117,14 +117,19 @@ router.get("/login/success", async (req, res) => {
       if (userExists) {
         generateToken(res, userExists._id)
       } else {
-        console.log("Creating user in success " + req.user._json.email)
-        const newUser = new User({
-          name: req.user._json.name,
-          email: req.user._json.email,
-          password: Date.now(), //dummy password
-        })
-        generateToken(res, newUser._id)
-        await newUser.save()
+        if (req.user) {
+          console.log("Creating user in success " + req.user._json.email)
+          const newUser = new User({
+            name: req.user._json.name,
+            email: req.user._json.email,
+            password: Date.now(), //dummy password
+          })
+          generateToken(res, newUser._id)
+          await newUser.save()
+        } else {
+          res.status(403)
+          return
+        }
       }
       res.status(200).json({
 
