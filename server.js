@@ -16,6 +16,8 @@ import orderRoutes from "./routes/orderRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
 import stripe from "./utils/stripe.js"
 import amqp from 'amqplib/callback_api.js';
+import { trace } from '@opentelemetry/api';
+const tracer = trace.getTracer('dice-lib');
 
 let ch = null;
 amqp.connect(process.env.CONN_URL, function (err, conn) {
@@ -80,5 +82,9 @@ app.use(notFound)
 app.use(errorHandler)
 
 app.listen(PORT, () => {
-  console.log(`Server is runing on port ${PORT}`)
+  return tracer.startActiveSpan('rollTheDice', (span) => {
+    console.log(`Server is runing on port ${PORT}`)
+    span.end();
+  });
+
 })
