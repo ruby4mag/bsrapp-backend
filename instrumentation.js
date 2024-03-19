@@ -12,7 +12,7 @@ const sdk = new NodeSDK({
   traceExporter: new ConsoleSpanExporter(),
   traceExporter: new OTLPTraceExporter({
     // optional - default url is http://localhost:4318/v1/traces
-    url: 'http://95.217.160.248/v1/traces',
+    url: 'http://95.217.160.248:4318/v1/traces',
     // optional - collection of custom headers to be sent with each request, empty by default
     headers: {},
   }),
