@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler"
 import Activity from "../models/activityModel.js"
 import User from "../models/userModel.js"
 import axios from 'axios';
+import { trace } from '@opentelemetry/api';
+const tracer = trace.getTracer('dice-lib');
 
 const getActivities = asyncHandler(async (req, res) => {
   const activities = await Activity.find({ user: req.user._id }).sort({ start_date: -1 }).populate(
@@ -137,7 +139,7 @@ const getPastActivities = asyncHandler(async (req, res) => {
 
 const getActivityRideDistance = asyncHandler(async (req, res) => {
   const e = new Date()
-  e.setDate(e.getDate() + 1 )
+  e.setDate(e.getDate() + 1)
   e.setHours(0, 0, 0, 0);
   const end = e.toISOString()
   e.setDate(e.getDate() - 30)
@@ -158,6 +160,14 @@ const getActivityRideDistance = asyncHandler(async (req, res) => {
 })
 
 const getActivityTotals = asyncHandler(async (req, res) => {
+
+  return tracer.startActiveSpan('rollTheDice1', (span) => {
+
+    // Be sure to end the span!
+    span.end();
+
+  });
+
   const e = new Date()
   const end = e.toISOString()
   e.setDate(e.getDate() - 30)
@@ -224,7 +234,7 @@ const getActivityDistanceYear = asyncHandler(async (req, res) => {
 
 const getActivityRunDistance = asyncHandler(async (req, res) => {
   const e = new Date()
-  e.setDate(e.getDate() + 1 )
+  e.setDate(e.getDate() + 1)
   e.setHours(0, 0, 0, 0);
   const end = e.toISOString()
   e.setDate(e.getDate() - 30)
@@ -250,7 +260,7 @@ const getActivityRunDistance = asyncHandler(async (req, res) => {
 
 const getActivityCalories = asyncHandler(async (req, res) => {
   const e = new Date()
-  e.setDate(e.getDate() + 1 )
+  e.setDate(e.getDate() + 1)
   e.setHours(0, 0, 0, 0);
   const end = e.toISOString()
   e.setDate(e.getDate() - 30)
