@@ -138,25 +138,29 @@ const getPastActivities = asyncHandler(async (req, res) => {
 })
 
 const getActivityRideDistance = asyncHandler(async (req, res) => {
-  const e = new Date()
-  e.setDate(e.getDate() + 1)
-  e.setHours(0, 0, 0, 0);
-  const end = e.toISOString()
-  e.setDate(e.getDate() - 30)
-  e.setHours(0, 0, 0, 0);
-  const start = new Date(e).toISOString();
-  const Activitystats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Ride", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "day", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "day", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, day: { $dateToString: { format: "%m-%d", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
-  console.log("Activity stats are " + JSON.stringify(Activitystats))
-  const keys = []
-  const values = []
-  Activitystats.forEach((i) => {
-    keys.push(i['day'])
-    values.push(i['total'])
-  });
-  var send = {}
-  send['labels'] = keys
-  send['values'] = values.map((v) => { return v / 1000 })
-  res.json(send)
+  tracer.startActiveSpan('getActivityRideDistance', async (span) => {
+    // Be sure to end the span!
+    const e = new Date()
+    e.setDate(e.getDate() + 1)
+    e.setHours(0, 0, 0, 0);
+    const end = e.toISOString()
+    e.setDate(e.getDate() - 30)
+    e.setHours(0, 0, 0, 0);
+    const start = new Date(e).toISOString();
+    const Activitystats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Ride", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "day", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "day", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, day: { $dateToString: { format: "%m-%d", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
+    console.log("Activity stats are " + JSON.stringify(Activitystats))
+    const keys = []
+    const values = []
+    Activitystats.forEach((i) => {
+      keys.push(i['day'])
+      values.push(i['total'])
+    });
+    var send = {}
+    send['labels'] = keys
+    send['values'] = values.map((v) => { return v / 1000 })
+    res.json(send)
+    span.end();
+  })
 })
 
 const getActivityTotals = asyncHandler(async (req, res) => {
@@ -207,75 +211,87 @@ const getActivitymax = asyncHandler(async (req, res) => {
 
 
 const getActivityDistanceYear = asyncHandler(async (req, res) => {
-  const end = "2025-01-01"
-  const start = "2019-01-01"
-  const rideYearlyStats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Ride", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "year", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "year", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, year: { $dateToString: { format: "%Y", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
-  const runYearlyStats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Run", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "year", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "year", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, year: { $dateToString: { format: "%Y", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
+  tracer.startActiveSpan('getActivityDistanceYear', async (span) => {
+    // Be sure to end the span!
+    const end = "2025-01-01"
+    const start = "2019-01-01"
+    const rideYearlyStats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Ride", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "year", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "year", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, year: { $dateToString: { format: "%Y", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
+    const runYearlyStats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Run", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "year", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "year", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, year: { $dateToString: { format: "%Y", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
 
-  const keys = []
-  const ridevalues = []
-  const runvalues = []
-  rideYearlyStats.forEach((i) => {
-    keys.push(i['year'])
-    ridevalues.push(i['total'])
-  });
-  runYearlyStats.forEach((i) => {
-    runvalues.push(i['total'])
-  });
-  var send = {}
-  send['labels'] = keys
-  send['ridevalues'] = ridevalues.map((v) => { return v / 1000 })
-  send['runvalues'] = runvalues.map((v) => { return v / 1000 })
-  res.json(send)
+    const keys = []
+    const ridevalues = []
+    const runvalues = []
+    rideYearlyStats.forEach((i) => {
+      keys.push(i['year'])
+      ridevalues.push(i['total'])
+    });
+    runYearlyStats.forEach((i) => {
+      runvalues.push(i['total'])
+    });
+    var send = {}
+    send['labels'] = keys
+    send['ridevalues'] = ridevalues.map((v) => { return v / 1000 })
+    send['runvalues'] = runvalues.map((v) => { return v / 1000 })
+    res.json(send)
+    span.end();
+  })
 })
 
 const getActivityRunDistance = asyncHandler(async (req, res) => {
-  const e = new Date()
-  e.setDate(e.getDate() + 1)
-  e.setHours(0, 0, 0, 0);
-  const end = e.toISOString()
-  e.setDate(e.getDate() - 30)
-  e.setHours(0, 0, 0, 0);
-  const start = new Date(e).toISOString();
+  tracer.startActiveSpan('getActivityRunDistance', async (span) => {
+    // Be sure to end the span!
+    const e = new Date()
+    e.setDate(e.getDate() + 1)
+    e.setHours(0, 0, 0, 0);
+    const end = e.toISOString()
+    e.setDate(e.getDate() - 30)
+    e.setHours(0, 0, 0, 0);
+    const start = new Date(e).toISOString();
 
-  console.log("Start " + start)
-  console.log("End " + end)
+    console.log("Start " + start)
+    console.log("End " + end)
 
-  const Activitystats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Run", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "day", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "day", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, day: { $dateToString: { format: "%m-%d", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
-  console.log("Activity stats are " + JSON.stringify(Activitystats))
-  const keys = []
-  const values = []
-  Activitystats.forEach((i) => {
-    keys.push(i['day'])
-    values.push(i['total'])
-  });
-  var send = {}
-  send['labels'] = keys
-  send['values'] = values.map((v) => { return v / 1000 })
-  res.json(send)
+    const Activitystats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Run", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "day", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "day", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, day: { $dateToString: { format: "%m-%d", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
+    console.log("Activity stats are " + JSON.stringify(Activitystats))
+    const keys = []
+    const values = []
+    Activitystats.forEach((i) => {
+      keys.push(i['day'])
+      values.push(i['total'])
+    });
+    var send = {}
+    send['labels'] = keys
+    send['values'] = values.map((v) => { return v / 1000 })
+    res.json(send)
+    span.end();
+  })
 })
 
 const getActivityCalories = asyncHandler(async (req, res) => {
-  const e = new Date()
-  e.setDate(e.getDate() + 1)
-  e.setHours(0, 0, 0, 0);
-  const end = e.toISOString()
-  e.setDate(e.getDate() - 30)
-  e.setHours(0, 0, 0, 0);
-  const start = new Date(e).toISOString();
+  tracer.startActiveSpan('getActivityCalories', async (span) => {
+    // Be sure to end the span!
+    const e = new Date()
+    e.setDate(e.getDate() + 1)
+    e.setHours(0, 0, 0, 0);
+    const end = e.toISOString()
+    e.setDate(e.getDate() - 30)
+    e.setHours(0, 0, 0, 0);
+    const start = new Date(e).toISOString();
 
-  const Activitystats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "day", }, }, total: { $sum: "$calories", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "day", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, day: { $dateToString: { format: "%m-%d", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
-  console.log("Activity stats are " + JSON.stringify(Activitystats))
-  const keys = []
-  const values = []
-  Activitystats.forEach((i) => {
-    keys.push(i['day'])
-    values.push(i['total'])
-  });
-  var send = {}
-  send['labels'] = keys
-  send['values'] = values
-  res.json(send)
+    const Activitystats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "day", }, }, total: { $sum: "$calories", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "day", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, day: { $dateToString: { format: "%m-%d", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
+    console.log("Activity stats are " + JSON.stringify(Activitystats))
+    const keys = []
+    const values = []
+    Activitystats.forEach((i) => {
+      keys.push(i['day'])
+      values.push(i['total'])
+    });
+    var send = {}
+    send['labels'] = keys
+    send['values'] = values
+    res.json(send)
+    span.end();
+  })
 })
 
 
