@@ -162,14 +162,10 @@ const getActivityRideDistance = asyncHandler(async (req, res) => {
 const getActivityTotals = asyncHandler(async (req, res) => {
 
   tracer.startActiveSpan('getActivityTotals', async (span) => {
-
     // Be sure to end the span!
-
-
     const e = new Date()
     const end = e.toISOString()
     e.setDate(e.getDate() - 30)
-    const start = new Date(e).toISOString();
     const ActivityTotals = await Activity.aggregate([{ $match: { user: req.user._id, }, }, { $group: { _id: "$type", total: { $sum: "$distance", }, }, }, { $project: { all: 1, total: 1, }, },])
     console.log("Activity Totals are " + JSON.stringify(ActivityTotals))
     const keys = []
@@ -185,25 +181,24 @@ const getActivityTotals = asyncHandler(async (req, res) => {
     res.json(send)
     span.end();
   })
-
-
 });
 
 const getActivitymax = asyncHandler(async (req, res) => {
-  const e = new Date()
-  const end = e.toISOString()
-  e.setDate(e.getDate() - 30)
-  const start = new Date(e).toISOString();
-  const ActivityTotals = await Activity.aggregate([{ $match: { user: req.user._id, }, }, { $group: { _id: "$type", total: { $max: "$distance", }, }, }, { $project: { all: 1, total: 1, }, },])
-  console.log("Activity Max are " + JSON.stringify(ActivityTotals))
+  tracer.startActiveSpan('getActivitymax', async (span) => {
+    // Be sure to end the span!
+    const e = new Date()
+    const end = e.toISOString()
+    e.setDate(e.getDate() - 30)
+    const ActivityTotals = await Activity.aggregate([{ $match: { user: req.user._id, }, }, { $group: { _id: "$type", total: { $max: "$distance", }, }, }, { $project: { all: 1, total: 1, }, },])
+    console.log("Activity Max are " + JSON.stringify(ActivityTotals))
+    var send = {}
+    ActivityTotals.forEach((i) => {
+      send[i['_id']] = (i['total'] / 1000).toFixed(2)
+    });
 
-  var send = {}
-
-  ActivityTotals.forEach((i) => {
-    send[i['_id']] = (i['total'] / 1000).toFixed(2)
-  });
-
-  res.json(send)
+    res.json(send)
+    span.end();
+  })
 })
 
 
