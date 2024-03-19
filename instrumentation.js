@@ -20,6 +20,9 @@ const sdk = new NodeSDK({
     exporter: new ConsoleMetricExporter(),
   }),
   instrumentations: [getNodeAutoInstrumentations()],
+  resource: new Resource({
+    [SemanticResourceAttributes.SERVICE_NAME]: 'BSRsport-Backend',
+  }),
 });
 
 sdk.start();
