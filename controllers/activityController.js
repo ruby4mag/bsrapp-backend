@@ -183,8 +183,9 @@ const getActivityTotals = asyncHandler(async (req, res) => {
     send['labels'] = keys
     send['values'] = values.map((v) => { return v / 1000 })
     res.json(send)
+    span.end();
   })
-  span.end();
+
 
 });
 
