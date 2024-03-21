@@ -12,7 +12,6 @@ import cookieParser from "cookie-parser"
 import passport from "./utils/passport.js"
 import authRoutes from "./routes/authRoutes.js"
 import stravaRoutes from "./routes/stravaRoutes.js"
-import orderRoutes from "./routes/orderRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
 import stripe from "./utils/stripe.js"
 import amqp from 'amqplib/callback_api.js';
@@ -74,7 +73,6 @@ app.use("/api/activities", activityRoutes)
 app.use("/api/rules", ruleRoutes)
 app.use("/api/users", userRoutes)
 app.use("/auth", authRoutes)
-app.use("/api/orders", orderRoutes)
 app.use("/strava", stravaRoutes)
 app.use("/api/admin", adminRoutes)
 
