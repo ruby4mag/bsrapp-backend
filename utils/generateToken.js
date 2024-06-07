@@ -11,9 +11,9 @@ const generateToken = (req, res, userId) => {
     sameSite: "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000, //30days
     //domain: process.env.COOKIE_DOMAIN
-    domain: ""
+    domain: "."
 
-    
+
   })
 }
 
