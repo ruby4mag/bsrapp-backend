@@ -7,12 +7,12 @@ const generateToken = (req, res, userId) => {
 
   res.cookie("jwt", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== "development",
+    secure: false,
+    //secure: process.env.NODE_ENV !== "development",
     sameSite: "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000, //30days
     //domain: process.env.COOKIE_DOMAIN
-    domain: "192.168.1.201"
-
+    domain: process.env.COOKIE_DOMAIN
 
   })
 }

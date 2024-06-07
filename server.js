@@ -50,7 +50,7 @@ app.use((req, res, next) => {
 
 app.use(
   cors({
-    origin: ["https://react.bsrsport.org", "http://192.168.1.201:3001", "https://www.bsrsport.org"],
+    origin: ["https://react.bsrsport.org", "http://test.bsrsport.org:3001", "http://192.168.1.201:3001", "https://www.bsrsport.org"],
     //origin: ["http://127.0.0.1:3000", "http://localhost:3000"],
     methods: "GET, POST, PATCH, DELETE, PUT",
     credentials: true,
