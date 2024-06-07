@@ -13,6 +13,7 @@ const generateToken = (req, res, userId) => {
     //domain: process.env.COOKIE_DOMAIN
     domain: ""
 
+    
   })
 }
 
