@@ -10,6 +10,7 @@ const generateToken = (req, res, userId) => {
     //secure: process.env.NODE_ENV !== "development",
     sameSite: "None",
     maxAge: 30 * 24 * 60 * 60 * 1000, //30days
+    secure: true
     //domain: process.env.COOKIE_DOMAIN
   })
 }
