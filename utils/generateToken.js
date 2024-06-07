@@ -9,10 +9,10 @@ const generateToken = (req, res, userId) => {
   if (req.hostname === '95.217.158.79') {
     res.cookie("jwt", token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV !== "development",
-      sameSite: "lax",
+      secure: false,
+      //sameSite: "lax",
       maxAge: 30 * 24 * 60 * 60 * 1000, //30days
-      domain: process.env.COOKIE_DOMAIN
+      //domain: process.env.COOKIE_DOMAIN
     })
   } else {
     res.cookie("jwt", token, {
