@@ -5,6 +5,7 @@ import sendEmail from "../utils/sendEmail.js"
 import crypto from "crypto"
 
 const loginUser = asyncHandler(async (req, res) => {
+  console.log("Request sip is " + req.ip)
   const { email, password } = req.body
 
   const user = await User.findOne({ email })
