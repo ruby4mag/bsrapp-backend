@@ -115,7 +115,7 @@ router.get("/login/success", async (req, res) => {
     if (decoded.userId) {
       const userExists = await User.findById(decoded.userId)
       if (userExists) {
-        generateToken(res, userExists._id)
+        generateToken(req, res, userExists._id)
       } else {
         if (req.user) {
           console.log("Creating user in success " + req.user._json.email)
@@ -124,7 +124,7 @@ router.get("/login/success", async (req, res) => {
             email: req.user._json.email,
             password: Date.now(), //dummy password
           })
-          generateToken(res, newUser._id)
+          generateToken(req, res, newUser._id)
           await newUser.save()
         } else {
           res.status(403)
