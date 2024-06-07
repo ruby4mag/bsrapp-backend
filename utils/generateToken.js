@@ -5,7 +5,7 @@ const generateToken = (req, res, userId) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   })
-  const domain = process.env.COOKIE_DOMAIN
+  let domain = process.env.COOKIE_DOMAIN
   if (req.hostname != '95.217.158.79') {
     domain = "*"
   }
