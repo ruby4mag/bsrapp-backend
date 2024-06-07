@@ -6,7 +6,7 @@ const generateToken = (req, res, userId) => {
     expiresIn: "30d",
   })
 
-  if (req.hostname == '95.217.158.79') {
+  if (req.hostname === '95.217.158.79') {
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV !== "development",
