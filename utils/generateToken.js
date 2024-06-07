@@ -1,4 +1,3 @@
-import { request } from "http"
 import jwt from "jsonwebtoken"
 
 const generateToken = (req, res, userId) => {
@@ -6,24 +5,13 @@ const generateToken = (req, res, userId) => {
     expiresIn: "30d",
   })
 
-  if (req.hostname === '95.217.158.79') {
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: false,
-      //sameSite: "lax",
-      maxAge: 30 * 24 * 60 * 60 * 1000, //30days
-      //domain: process.env.COOKIE_DOMAIN
-    })
-  } else {
-    res.cookie("jwt", token, {
-      httpOnly: true,
-      secure: false,
-      //sameSite: "lax",
-      maxAge: 30 * 24 * 60 * 60 * 1000, //30days
-    })
-  }
-
-
+  res.cookie("jwt", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV !== "development",
+    sameSite: "lax",
+    maxAge: 30 * 24 * 60 * 60 * 1000, //30days
+    domain: process.env.COOKIE_DOMAIN
+  })
 }
 
 export default generateToken
