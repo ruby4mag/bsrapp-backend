@@ -30,6 +30,7 @@ const getPastActivities = asyncHandler(async (req, res) => {
     2022: [1640995200, 1672531200],
     2023: [1672531200, 1704067200],
     2024: [1704067200, 1735689600],
+    2025: [1735689600, 1767225600],
   }
   const user = await User.findById(req.user.id)
   // the strava_athlete_id 
