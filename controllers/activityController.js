@@ -214,7 +214,7 @@ const getActivitymax = asyncHandler(async (req, res) => {
 const getActivityDistanceYear = asyncHandler(async (req, res) => {
   tracer.startActiveSpan('getActivityDistanceYear', async (span) => {
     // Be sure to end the span!
-    const end = "2025-01-01"
+    const end = "2026-01-01"
     const start = "2019-01-01"
     const rideYearlyStats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Ride", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "year", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "year", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, year: { $dateToString: { format: "%Y", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
     const runYearlyStats = await Activity.aggregate([{ $match: { start_date: { $gte: new Date(start), $lte: new Date(end), }, type: "Run", user: req.user._id }, }, { $group: { _id: { $dateTrunc: { date: "$start_date", unit: "year", }, }, total: { $sum: "$distance", }, }, }, { $densify: { field: "_id", range: { step: 1, unit: "year", bounds: [new Date(start), new Date(end)] }, }, }, { $project: { _id: 0, year: { $dateToString: { format: "%Y", date: "$_id" } }, type: 1, total: { $cond: [{ $not: ["$total"], }, 0, "$total",], }, }, },])
